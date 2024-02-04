@@ -1,0 +1,93 @@
+# Google Camera Go (Prebuilt)
+
+APK provided by AOSPA, this is an attempt to make GCamGO more capable
+and easier to build.
+
+Even though this tree is located in Kasumi repositories, it doesn't
+mean you cannot use it on other ROMs!
+
+## Building Inline
+
+To make this build inline, you have 3 options (for making build system
+clone it);
+- ~~Abusing~~ Utilizing dependencies
+- Using a local manifest
+- Cloning manually
+
+Then we'll include a file to get it actually up.
+
+### Utilizing dependencies
+
+This is the simplest one, you just add a little entry to your device
+dependencies and let build system handle the rest. Keep in mind this
+works only if your tree is on official repositories. If not, it won't
+work.
+
+```
+  {
+    "repository": "ProjectKasumi/vendor_gcgop",
+    "target_path": "vendor/gcgop", // You can use a different path as well, path is tied to a variable.
+    "branch": "kasumi-v1", // This is just an example, you'll need to change this if we release a v2+.
+    "remote": "github"
+  }
+```
+
+### Using a local manifest
+
+Did you know? That dependencies in ROMs actually write a local
+manifest too! Let's see how can you add your own.
+- Create the directory if it doesn't exist already: `mkdir $TOP/.repo/local_manifests`
+- Create our local manifest: `touch $TOP/.repo/local_manifests/gcgop.xml`
+- Now paste the contents.
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <remote name="kasumi" fetch="https://git.polycule.co/ProjectKasumi/android" revision="kasumi-v1" />
+    <project path="vendor/gcgop" remote="kasumi" clone-depth="1" />
+</manifest>
+```
+
+### Cloning manually
+
+Just run this command:
+
+```
+git clone https://git.polycule.co/ProjectKasumi/android/vendor_gcgop -b kasumi-v1 --depth=1 --no-tags vendor/gcgop
+```
+
+## Making it build
+
+If you're building Kasumi, you don't need to do any of the above.
+Because since this is a part of our sources, we already clone this
+just in case. So all you need is a simple flag;
+
+```
+KASUMI_INCLUDE_GCGOP := true
+```
+
+If you're building another ROM, replicating what this flag does also
+is as simple as...
+
+```
+$(call inherit-product-if-exists, $(GCGOP_VENDOR_DIR)/config.mk)
+```
+
+# Avoiding conflicts with ROM-provided GCamGO
+
+Let's say you're building a ROM with GCamGO present in their sources.
+Ever wondered how do we circumvent this issue?
+
+Simple.
+
+All we did was a special naming for our package, and overriding the
+possible existing one so that we don't get into a single issue.
+
+In case you wonder, the package name in build system is `KasumiGCGOP`.
+Creative, right? No conflicts, no common naming. ;)
+
+# Credits
+
+- [**AOSPA**](https://github.com/AOSPA) for barebones resources
+- [**Antonino Scordino**](https://github.com/aScordino) for his mention and helps
+- [**halogenOS**](https://git.halogenos.org/halogenOS) for the special vendorsetup
