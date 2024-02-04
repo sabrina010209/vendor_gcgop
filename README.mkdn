@@ -53,7 +53,7 @@ manifest too! Let's see how can you add your own.
 Just run this command:
 
 ```
-git clone https://git.polycule.co/ProjectKasumi/android/vendor_gcgop -b kasumi-v1 --depth=1 --no-tags vendor/gcgop
+git clone https://github.com/cly-build/vendor_gcgop -b master --depth=1 --no-tags vendor/gcgop
 ```
 
 ## Making it build
@@ -70,7 +70,8 @@ If you're building another ROM, replicating what this flag does also
 is as simple as...
 
 ```
-$(call inherit-product-if-exists, $(GCGOP_VENDOR_DIR)/config.mk)
+# Flags prebuild lmc-camera
+$(call inherit-product-if-exists, vendor/gcgop/config.mk)
 ```
 
 # Avoiding conflicts with ROM-provided GCamGO
